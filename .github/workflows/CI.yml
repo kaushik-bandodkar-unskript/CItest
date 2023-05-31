@@ -1,0 +1,27 @@
+name: Continious Integration
+
+on:
+  push:
+  
+jobs:
+  format:
+    runs-on: self-hosted
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+    - name: Install Yarn
+      run: npm install -g yarn
+    - run: yarn install --immutable --immutable-cache --check-cache
+    - run: yarn run format
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Apply formatting changes
+    - name: Uninstall Yarn
+      if: always()
+      run: npm uninstall -g yarn
